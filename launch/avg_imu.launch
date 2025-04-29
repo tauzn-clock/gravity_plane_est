@@ -1,0 +1,5 @@
+<launch>
+  <param name="imu_topic" value="/camera/gyro_accel/sample"/>
+  <param name="alpha" value="0.5" default="0.5"/>
+  <node name="avg_imu" pkg="gravity_plane_est" type="avg_imu" output="screen"/>
+</launch>
