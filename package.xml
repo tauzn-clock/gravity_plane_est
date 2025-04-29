@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>gravity_plane_est</name>
+  <version>0.1.0</version>
+  <description>
+    Place holder
+  </description>
+
+  <!-- Maintainers of the package -->
+  <maintainer email="youremail@example.com">Your Name</maintainer>
+
+  <!-- License for the package -->
+  <license>BSD</license>
+
+  <!-- Dependencies -->
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  
+  <!-- Build dependencies -->
+  <build_depend>catkin</build_depend>
+
+  <!-- Build tool dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Export dependencies (optional) -->
+  <export>
+    <build_type>catkin</build_type>
+  </export>
+</package>
