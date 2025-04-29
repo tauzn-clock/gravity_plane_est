@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
 
+ros::Publisher imu_msg_pub;
 sensor_msgs::Imu imu_msg;
 float alpha;
 
@@ -13,6 +14,8 @@ void imuCallback(const sensor_msgs::Imu::ConstPtr& msg)
     imu_msg.linear_acceleration.y = (1-alpha) * imu_msg.linear_acceleration.y + (alpha) * msg->linear_acceleration.y;
     imu_msg.linear_acceleration.z = (1-alpha) * imu_msg.linear_acceleration.z + (alpha) * msg->linear_acceleration.z;
 
+    // Publish the point cloud
+    imu_msg_pub.publish(imu_msg);
 }
 
 int main(int argc, char** argv)
@@ -35,7 +38,7 @@ int main(int argc, char** argv)
     nh.getParam("imu_topic", imu_topic);
     nh.getParam("alpha", alpha);
 
-    std::cout<<imu_topic<<std::endl;
+    imu_msg_pub = nh.advertise<sensor_msgs::Imu>("/imu_filtered", 100);
 
     ros::Subscriber camera_info_sub = nh.subscribe(imu_topic, 100, imuCallback);
 
