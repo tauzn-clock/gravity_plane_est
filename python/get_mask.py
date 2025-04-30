@@ -17,7 +17,7 @@ def get_mask(grav_normal, img_normal, pts_3d, dot_bound, kernel_size, cluster_si
     scalar_dist = scalar_dist[scalar_dist != 0]
     if (len(scalar_dist)==0):
         return mask
-
+        
     bins = np.arange(scalar_dist.min(), scalar_dist.max(), 0.01)
     hist, bin_edges = np.histogram(scalar_dist, bins=bins)
 

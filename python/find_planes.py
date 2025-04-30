@@ -23,7 +23,7 @@ class FindPlaneNode:
         self.rescale_depth = 1000
         self.dot_bound = 0.9
         self.correction_iteration = 5
-        self.kernel_size = 11
+        self.kernel_size = 21
         self.cluster_size = 5
 
         self.imu = None
@@ -56,7 +56,7 @@ class FindPlaneNode:
         pts_3d, index_2d = depth_to_pcd(depth, self.camera_intrinsic.K, W, H)
 
         grav_normal = np.array([self.imu.linear_acceleration.x, self.imu.linear_acceleration.y, self.imu.linear_acceleration.z])
-        grav_normal = grav_normal / np.linalg.norm(grav_normal)
+        grav_normal = grav_normal / (np.linalg.norm(grav_normal) + 1e-15)
 
         # Find img normal
         img_normal = get_normal(depth.reshape(H,W), self.camera_intrinsic.K)
@@ -102,14 +102,8 @@ class FindPlaneNode:
         
         mask = get_mask(grav_normal, img_normal, pts_3d, self.dot_bound, self.kernel_size, self.cluster_size)
 
-        print(mask.shape)
         if True:
-            # Plot mask
-            fig, ax = plt.subplots()
-            ax.imshow(hsv_img(mask.reshape(H,W)))
-            plt.axis('off')
-            # Save mask
-            plt.savefig("/catkin_ws/src/gravity_plane_est/mask.png")
+            plt.imsave("/catkin_ws/src/gravity_plane_est/mask.png", hsv_img(mask.reshape(H,W)))
 
     def run(self):
         rospy.spin()
