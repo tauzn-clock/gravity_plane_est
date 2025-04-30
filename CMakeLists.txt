@@ -26,6 +26,6 @@ target_link_libraries(avg_imu
 
 # Link python executable
 catkin_install_python(PROGRAMS
-  python/test.py
+  python/find_planes.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
