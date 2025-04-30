@@ -6,5 +6,6 @@
   
   <param name="depth_img_topic" value="/camera/depth/image_raw"/>
   <param name="depth_intrinsic_topic" value="/camera/depth/camera_info"/>
+  <param name="pointcloud_topic" value="/ground_planes"/>
   <node name="find_planes" pkg="gravity_plane_est" type="find_planes.py" output="screen"/>
 </launch>

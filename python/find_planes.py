@@ -5,10 +5,12 @@ import sys
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir)
 
+import struct
 import rospy
 import numpy as np
-from std_msgs.msg import Int32
-from sensor_msgs.msg import Imu, CameraInfo, Image
+from std_msgs.msg import Int32, Header
+from sensor_msgs import point_cloud2
+from sensor_msgs.msg import Imu, CameraInfo, Image, PointCloud2, PointField
 
 from depth_to_pcd import depth_to_pcd
 from get_normal import get_normal
@@ -24,7 +26,7 @@ class FindPlaneNode:
         self.dot_bound = 0.9
         self.correction_iteration = 5
         self.kernel_size = 21
-        self.cluster_size = 5
+        self.cluster_size = 11
 
         self.imu = None
         self.camera_intrinsic = None
@@ -32,12 +34,15 @@ class FindPlaneNode:
         rospy.init_node('find_plane_node')
 
         self.imu_topic = rospy.get_param('imu_filtered_topic', 100)
-        self.depth_img_topic = rospy.get_param('depth_img_topic', 20)
+        self.depth_img_topic = rospy.get_param('depth_img_topic', 30)
         self.depth_intrinsic_topic = rospy.get_param('depth_intrinsic_topic', 1)
+        self.pointcloud_topic = rospy.get_param('pointcloud_topic', 30)
 
         self.imu_sub = rospy.Subscriber(self.imu_topic, Imu, self.imuCallback)
         self.depth_img_sub = rospy.Subscriber(self.depth_img_topic, Image, self.depthImageCallback)
         self.depth_intrinsic_sub = rospy.Subscriber(self.depth_intrinsic_topic, CameraInfo, self.depthIntrinsicCallback)
+
+        self.pcd_pub = rospy.Publisher(self.pointcloud_topic, PointCloud2, queue_size=1)
     def imuCallback(self, msg):
         self.imu = msg
     
@@ -45,21 +50,21 @@ class FindPlaneNode:
         self.camera_intrinsic = msg
     
     def depthImageCallback(self, msg):
+        downsample = 4
+        downsample_root = int(downsample**0.5)
+
         if self.imu == None or self.camera_intrinsic == None:
             return
-        
-        W = msg.width
-        H = msg.height
-
-        depth = np.frombuffer(msg.data, dtype=np.int16)/self.rescale_depth
-        
-        pts_3d, index_2d = depth_to_pcd(depth, self.camera_intrinsic.K, W, H)
+        False
 
         grav_normal = np.array([self.imu.linear_acceleration.x, self.imu.linear_acceleration.y, self.imu.linear_acceleration.z])
         grav_normal = grav_normal / (np.linalg.norm(grav_normal) + 1e-15)
 
         # Find img normal
         img_normal = get_normal(depth.reshape(H,W), self.camera_intrinsic.K)
+        if downsample!=0:
+            img_normal = img_normal[::downsample_root,::downsample_root]
+
         img_normal_pos = img_normal.reshape(-1, 3)
         img_normal_neg = -img_normal_pos
         dot1 = np.dot(img_normal_pos, grav_normal).reshape(-1, 1)
@@ -78,8 +83,6 @@ class FindPlaneNode:
             plt.imsave("/catkin_ws/src/gravity_plane_est/normal.png", img_normal_rgb)
 
         grav_normal = gravity_correction(grav_normal,img_normal, pts_3d, self.dot_bound,self.correction_iteration)
-
-
 
         if True:
             dot1 = np.dot(img_normal, grav_normal).reshape(-1,1)
@@ -102,8 +105,46 @@ class FindPlaneNode:
         
         mask = get_mask(grav_normal, img_normal, pts_3d, self.dot_bound, self.kernel_size, self.cluster_size)
 
-        if True:
+        if False:
             plt.imsave("/catkin_ws/src/gravity_plane_est/mask.png", hsv_img(mask.reshape(H,W)))
+
+        # Publish pointcloud
+
+        if downsample!=0:
+            H//=downsample_root
+            W//=downsample_root
+
+        header = Header()
+        header.stamp = rospy.Time.now()
+        header.frame_id = "map"
+
+        mask_color = hsv_img(mask.reshape(H,W)).reshape(-1,3)
+        pcd_points = []
+        for i in range(len(pts_3d)):
+            x = pts_3d[i,0]
+            y = pts_3d[i,1]
+            z = pts_3d[i,2]
+
+            r = mask_color[i,0]
+            g = mask_color[i,1]
+            b = mask_color[i,2]
+            a = 255
+            rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, a))[0]
+
+            pt = [x, y, z, rgb]
+
+            pcd_points.append(pt)
+
+        fields = [
+            PointField('x', 0, PointField.FLOAT32, 1),
+            PointField('y', 4, PointField.FLOAT32, 1),
+            PointField('z', 8, PointField.FLOAT32, 1),
+            PointField('rgb', 12, PointField.UINT32, 1)
+        ]
+
+        pcd = point_cloud2.create_cloud(header, fields, pcd_points)
+
+        self.pcd_pub.publish(pcd)
 
     def run(self):
         rospy.spin()
