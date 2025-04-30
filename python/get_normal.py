@@ -3,7 +3,7 @@ import numpy as np
 
 def get_normal(depth, INTRINSICS):
     H, W = depth.shape
-    points, _ = depth_to_pcd(depth, INTRINSICS)
+    points, _ = depth_to_pcd(depth.flatten(), INTRINSICS, W, H)
 
     points = points.reshape(H, W, 3)
 
