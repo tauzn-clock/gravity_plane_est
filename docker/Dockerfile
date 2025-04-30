@@ -26,3 +26,6 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 
+RUN mkdir -p /catkin_ws/src
+WORKDIR /catkin_ws/src
+RUN git clone https://github.com/tauzn-clock/gravity_plane_est.git
