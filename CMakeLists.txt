@@ -4,6 +4,7 @@ project(gravity_plane_est)
 # Find catkin and dependencies
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
   sensor_msgs
 )
 
@@ -21,4 +22,10 @@ add_executable(avg_imu cpp/avg_imu.cpp)
 # Link the executable to the necessary libraries
 target_link_libraries(avg_imu
   ${catkin_LIBRARIES}
+)
+
+# Link python executable
+catkin_install_python(PROGRAMS
+  python/test.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

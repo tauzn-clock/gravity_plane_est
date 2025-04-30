@@ -34,11 +34,13 @@ int main(int argc, char** argv)
     // Create a node handle
     ros::NodeHandle nh;
 
-    std::string imu_topic;
+    std::string imu_topic, imu_filtered_topic;
     nh.getParam("imu_topic", imu_topic);
+    nh.getParam("imu_filtered_topic", imu_filtered_topic);
     nh.getParam("alpha", alpha);
+    
 
-    imu_msg_pub = nh.advertise<sensor_msgs::Imu>("/imu_filtered", 100);
+    imu_msg_pub = nh.advertise<sensor_msgs::Imu>(imu_filtered_topic, 100);
 
     ros::Subscriber camera_info_sub = nh.subscribe(imu_topic, 100, imuCallback);
 
