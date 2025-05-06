@@ -16,6 +16,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+# Find the YAML-CPP library (for YAML support)
+find_package(yaml-cpp REQUIRED)
+
 # Add the executable for the subscriber node
 add_executable(avg_imu cpp/avg_imu.cpp)
 add_executable(find_planes cpp/find_planes.cpp)
@@ -27,6 +30,7 @@ target_link_libraries(avg_imu
 
 target_link_libraries(find_planes
   ${catkin_LIBRARIES}
+  yaml-cpp
 )
 
 # Link python executable

@@ -4,7 +4,9 @@
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <vector>
+#include <yaml-cpp/yaml.h>
 
+YAML::Node config;
 sensor_msgs::Imu imu;
 sensor_msgs::CameraInfo camera_info;
 
@@ -51,9 +53,14 @@ int main(int argc, char** argv)
     nh.getParam("depth_img_topic", depth_img_topic);
     nh.getParam("depth_intrinsic_topic", depth_intrinsic_topic);
 
+    std::string yaml_file_path;
+    nh.getParam("yaml_file_path", yaml_file_path);
+    std::cout << "YAML file path: " << yaml_file_path << std::endl;
+    config = YAML::LoadFile(yaml_file_path);
+
     ros::Subscriber imu_sub = nh.subscribe(imu_topic, 100, imuCallback);
     ros::Subscriber depth_img_sub = nh.subscribe(depth_img_topic, 24, depthImageCallback);
-    ros::Subscriber camera_info_sub = nh.subscribe(imu_topic, 1, depthIntrinsicCallback);
+    ros::Subscriber camera_info_sub = nh.subscribe(depth_intrinsic_topic, 1, depthIntrinsicCallback);
 
     // Spin to keep the node alive
     ros::spin();
