@@ -3,12 +3,18 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/PointCloud2.h>
+
 #include <vector>
 #include <yaml-cpp/yaml.h>
+
+#include "utils/depthmsg_to_vector.cpp"
 
 YAML::Node config;
 sensor_msgs::Imu imu;
 sensor_msgs::CameraInfo camera_info;
+
+bool imuReceived = false;
+bool cameraInfoReceived = false;
 
 void imuCallback(const sensor_msgs::Imu::ConstPtr& msg){
     imu.angular_velocity.x = msg->angular_velocity.x;
@@ -21,6 +27,8 @@ void imuCallback(const sensor_msgs::Imu::ConstPtr& msg){
     imu.orientation.y = msg->orientation.y;
     imu.orientation.z = msg->orientation.z;
     imu.orientation.w = msg->orientation.w;
+
+    imuReceived = true;
 }
 
 void depthIntrinsicCallback(const sensor_msgs::CameraInfo::ConstPtr& msg){
@@ -32,12 +40,19 @@ void depthIntrinsicCallback(const sensor_msgs::CameraInfo::ConstPtr& msg){
     camera_info.K = msg->K;
     camera_info.R = msg->R;
     camera_info.P = msg->P;
+
+    cameraInfoReceived = true;
 }
 
 void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
-    // Process the depth image here
-    // For example, convert to point cloud or perform plane detection
-    // This is where you would implement your plane detection algorithm
+    if (!imuReceived || !cameraInfoReceived) {
+        ROS_WARN("IMU or Camera Info not received yet.");
+        return;
+    }
+
+    std::vector<float> depth_data = depthmsg_to_vector(msg, config["rescale_depth"].as<float>());
+
+
 }
 
 int main(int argc, char** argv)
