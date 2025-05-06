@@ -7,7 +7,9 @@
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
+#include "utils/math_utils.cpp"
 #include "utils/process_depthmsg.cpp"
+#include "utils/get_normal.cpp"
 
 YAML::Node config;
 sensor_msgs::Imu imu;
@@ -45,13 +47,22 @@ void depthIntrinsicCallback(const sensor_msgs::CameraInfo::ConstPtr& msg){
 }
 
 void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
+
     if (!imuReceived || !cameraInfoReceived) {
         ROS_WARN("IMU or Camera Info not received yet.");
         return;
     }
 
+    int W = msg->width;
+    int H = msg->height;
+
     std::vector< std::array<float, 3> > points = depthmsg_to_3d(msg, camera_info, config["rescale_depth"].as<float>());
 
+    std::array<float, 3> gravity_vector = {(float)imu.linear_acceleration.x, (float)imu.linear_acceleration.y, (float)imu.linear_acceleration.z};
+    gravity_vector = normalise(gravity_vector);
+
+    std::vector< std::array<float, 3> > img_normals = get_normal(points, W, H);
+    
 }
 
 int main(int argc, char** argv)
