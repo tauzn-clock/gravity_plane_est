@@ -1,0 +1,62 @@
+#include <ros/ros.h>
+#include <sensor_msgs/Imu.h>
+#include <sensor_msgs/Image.h>
+#include <sensor_msgs/CameraInfo.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <vector>
+
+sensor_msgs::Imu imu;
+sensor_msgs::CameraInfo camera_info;
+
+void imuCallback(const sensor_msgs::Imu::ConstPtr& msg){
+    imu.angular_velocity.x = msg->angular_velocity.x;
+    imu.angular_velocity.y = msg->angular_velocity.y;
+    imu.angular_velocity.z = msg->angular_velocity.z;
+    imu.linear_acceleration.x = msg->linear_acceleration.x;
+    imu.linear_acceleration.y = msg->linear_acceleration.y;
+    imu.linear_acceleration.z = msg->linear_acceleration.z;
+    imu.orientation.x = msg->orientation.x;
+    imu.orientation.y = msg->orientation.y;
+    imu.orientation.z = msg->orientation.z;
+    imu.orientation.w = msg->orientation.w;
+}
+
+void depthIntrinsicCallback(const sensor_msgs::CameraInfo::ConstPtr& msg){
+    camera_info.header = msg->header;
+    camera_info.width = msg->width;
+    camera_info.height = msg->height;
+    camera_info.distortion_model = msg->distortion_model;
+    camera_info.D = msg->D;
+    camera_info.K = msg->K;
+    camera_info.R = msg->R;
+    camera_info.P = msg->P;
+}
+
+void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
+    // Process the depth image here
+    // For example, convert to point cloud or perform plane detection
+    // This is where you would implement your plane detection algorithm
+}
+
+int main(int argc, char** argv)
+{    
+    // Initialize ROS
+    ros::init(argc, argv, "find_planes");
+
+    // Create a node handle
+    ros::NodeHandle nh;
+
+    std::string imu_topic, depth_img_topic, depth_intrinsic_topic;
+    nh.getParam("imu_topic", imu_topic);
+    nh.getParam("depth_img_topic", depth_img_topic);
+    nh.getParam("depth_intrinsic_topic", depth_intrinsic_topic);
+
+    ros::Subscriber imu_sub = nh.subscribe(imu_topic, 100, imuCallback);
+    ros::Subscriber depth_img_sub = nh.subscribe(depth_img_topic, 24, depthImageCallback);
+    ros::Subscriber camera_info_sub = nh.subscribe(imu_topic, 1, depthIntrinsicCallback);
+
+    // Spin to keep the node alive
+    ros::spin();
+
+    return 0;
+}

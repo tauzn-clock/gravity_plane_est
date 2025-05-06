@@ -18,9 +18,14 @@ include_directories(
 
 # Add the executable for the subscriber node
 add_executable(avg_imu cpp/avg_imu.cpp)
+add_executable(find_planes cpp/find_planes.cpp)
 
 # Link the executable to the necessary libraries
 target_link_libraries(avg_imu
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(find_planes
   ${catkin_LIBRARIES}
 )
 
