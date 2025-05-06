@@ -7,7 +7,7 @@
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
-#include "utils/depthmsg_to_vector.cpp"
+#include "utils/process_depthmsg.cpp"
 
 YAML::Node config;
 sensor_msgs::Imu imu;
@@ -50,8 +50,7 @@ void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
         return;
     }
 
-    std::vector<float> depth_data = depthmsg_to_vector(msg, config["rescale_depth"].as<float>());
-
+    std::vector< std::array<float, 3> > points = depthmsg_to_3d(msg, camera_info, config["rescale_depth"].as<float>());
 
 }
 
