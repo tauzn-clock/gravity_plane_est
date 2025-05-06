@@ -11,8 +11,8 @@ std::vector<float> depthmsg_to_vector(const sensor_msgs::Image::ConstPtr& msg, f
     std::vector<float> depth_data(W * H);
 
     if (msg->encoding == "16UC1") {
-        for (int i = 0; i < W * H; i+=2) {
-            depth_data[i] = (uint16_t(msg->data[i]) + (uint16_t(msg->data[i+1]) << 8)) / depth_scale;
+        for (int i = 0; i < 2 * W * H; i+=2) {
+            depth_data[i/2] = (uint16_t(msg->data[i]) + (uint16_t(msg->data[i+1]) << 8)) / depth_scale;
         }
     }
 
@@ -36,11 +36,9 @@ std::vector< std::array<float, 3> > depthmsg_to_3d(const sensor_msgs::Image::Con
         for (int j = 0; j < W; ++j) {
             int index = i * W + j;
             float z = depth_data[index];
-            if (z > 0) {
-                points[index][0] = (j - cx) * z / fx;
-                points[index][1] = (i - cy) * z / fy;
-                points[index][2] = z;
-            } 
+            points[index][0] = (j - cx) * z / fx;
+            points[index][1] = (i - cy) * z / fy;
+            points[index][2] = z;
         }
     }
 

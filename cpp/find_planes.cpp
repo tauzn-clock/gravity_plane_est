@@ -62,7 +62,6 @@ void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
     gravity_vector = normalise(gravity_vector);
 
     std::vector< std::array<float, 3> > img_normals = get_normal(points, W, H);
-    
 }
 
 int main(int argc, char** argv)
