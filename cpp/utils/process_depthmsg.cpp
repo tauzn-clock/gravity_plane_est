@@ -26,9 +26,9 @@ std::vector< std::array<float, 3> > depthmsg_to_3d(const sensor_msgs::Image::Con
     int H = msg->height;
 
     float fx = camera_info.K[0];
-    float fy = camera_info.K[5];
+    float fy = camera_info.K[4];
     float cx = camera_info.K[2];
-    float cy = camera_info.K[6];
+    float cy = camera_info.K[5];
 
     std::vector< std::array<float, 3> > points(depth_data.size());
     
