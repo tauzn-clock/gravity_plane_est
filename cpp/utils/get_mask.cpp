@@ -57,11 +57,6 @@ std::vector<int> get_mask(
         }
     );
 
-    std::cout<<"prop:"<<" "<<dillation.size()<<" "<<store_index.size()<<std::endl;
-    for(int i=0; i<store_index.size(); i++){
-        std::cout<<store_index[i].first<<" "<<store_index[i].second<<std::endl;
-    }
-
     std::vector<int> mask(normal.size());
 
     for(int i=0; i<mask.size(); i++){

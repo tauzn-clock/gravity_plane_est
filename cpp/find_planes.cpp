@@ -72,6 +72,8 @@ void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
 
 
     std::vector<int> mask = get_mask(img_normals, points, gravity_vector, config["dot_bound"].as<float>(), config["kernel_size"].as<int>(), config["cluster_size"].as<int>());
+
+    if (VISUALISE) save_mask(mask, W, H, "/catkin_ws/src/gravity_plane_est/mask.png");
 }
 
 int main(int argc, char** argv)
