@@ -8,8 +8,6 @@ std::vector<int> get_mask(
 ){
     std::vector<float> dist(normal.size());
 
-    centre_to_hemisphere(normal,grav);
-
     float largest = -10000;
     float smallest = 10000;
 

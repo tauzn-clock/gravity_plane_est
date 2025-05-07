@@ -11,6 +11,7 @@
 #include "utils/process_depthmsg.cpp"
 #include "utils/get_normal.cpp"
 #include "utils/visualise.cpp"
+#include "utils/correct_gravity.cpp"
 #include "utils/get_mask.cpp"
 
 #define VISUALISE true
@@ -70,7 +71,8 @@ void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
 
     if (VISUALISE) save_normal(img_normals, W, H, "/catkin_ws/src/gravity_plane_est/normal.png");
 
-
+    correct_gravity(img_normals, gravity_vector, config["dot_bound"].as<float>(), config["correction_iteration"].as<int>());
+    centre_to_hemisphere(img_normals,gravity_vector);
     std::vector<int> mask = get_mask(img_normals, points, gravity_vector, config["dot_bound"].as<float>(), config["kernel_size"].as<int>(), config["cluster_size"].as<int>());
 
     if (VISUALISE) save_mask(mask, W, H, "/catkin_ws/src/gravity_plane_est/mask.png");
