@@ -18,6 +18,10 @@ void imuCallback(const sensor_msgs::Imu::ConstPtr& msg)
     imu_msg.linear_acceleration.x += - alpha * store_imu_msg[store_imu_msg_pt].linear_acceleration.x + alpha * msg->linear_acceleration.x;
     imu_msg.linear_acceleration.y += - alpha * store_imu_msg[store_imu_msg_pt].linear_acceleration.y + alpha * msg->linear_acceleration.y;
     imu_msg.linear_acceleration.z += - alpha * store_imu_msg[store_imu_msg_pt].linear_acceleration.z + alpha * msg->linear_acceleration.z;
+    imu_msg.orientation.x += - alpha * store_imu_msg[store_imu_msg_pt].orientation.x + alpha * msg->orientation.x;
+    imu_msg.orientation.y += - alpha * store_imu_msg[store_imu_msg_pt].orientation.y + alpha * msg->orientation.y;
+    imu_msg.orientation.z += - alpha * store_imu_msg[store_imu_msg_pt].orientation.z + alpha * msg->orientation.z;
+    imu_msg.orientation.w += - alpha * store_imu_msg[store_imu_msg_pt].orientation.w + alpha * msg->orientation.w;
     
     store_imu_msg[store_imu_msg_pt] = *msg;
     store_imu_msg_pt++;
@@ -35,6 +39,10 @@ int main(int argc, char** argv)
     imu_msg.linear_acceleration.x = 0;
     imu_msg.linear_acceleration.y = 0;
     imu_msg.linear_acceleration.z = 0;
+    imu_msg.orientation.x = 0;
+    imu_msg.orientation.y = 0;
+    imu_msg.orientation.z = 0;
+    imu_msg.orientation.w = 0;
 
     // Initialize ROS
     ros::init(argc, argv, "avg_imu");
@@ -56,6 +64,10 @@ int main(int argc, char** argv)
         store_imu_msg[i].linear_acceleration.x=0;
         store_imu_msg[i].linear_acceleration.y=0;
         store_imu_msg[i].linear_acceleration.z=0;
+        store_imu_msg[i].orientation.x=0;
+        store_imu_msg[i].orientation.y=0;
+        store_imu_msg[i].orientation.z=0;
+        store_imu_msg[i].orientation.w=0;
     }
 
     imu_msg_pub = nh.advertise<sensor_msgs::Imu>(imu_filtered_topic, 100);
