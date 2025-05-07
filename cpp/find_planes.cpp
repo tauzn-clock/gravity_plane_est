@@ -69,7 +69,7 @@ void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
     std::vector< std::array<float, 3> > img_normals = get_normal(points, W, H);
     centre_to_hemisphere(img_normals,gravity_vector);
 
-    if (VISUALISE) save_normal(img_normals, W, H, "/catkin_ws/src/gravity_plane_est/normal.png");
+    if (false) save_normal(img_normals, W, H, "/catkin_ws/src/gravity_plane_est/normal.png");
 
     correct_gravity(img_normals, gravity_vector, config["dot_bound"].as<float>(), config["correction_iteration"].as<int>());
     centre_to_hemisphere(img_normals,gravity_vector);

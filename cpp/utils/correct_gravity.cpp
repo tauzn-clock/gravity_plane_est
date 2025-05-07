@@ -29,7 +29,7 @@ void correct_gravity(
                 float cos_x = normal_x[1] * grav_x[1] + normal_x[2] * grav_x[2];
                 float sin_x = normal_x[2] * grav_x[1] - normal_x[1] * grav_x[2];
                 float cos_y = normal_y[0] * grav_y[0] + normal_y[2] * grav_y[2];
-                float sin_y = normal_y[2] * grav_y[0] - normal_y[0] * grav_y[2];
+                float sin_y = - normal_y[2] * grav_y[0] + normal_y[0] * grav_y[2];
 
                 float angle_x = std::atan2(sin_x, cos_x);
                 float angle_y = std::atan2(sin_y, cos_y);
@@ -43,7 +43,7 @@ void correct_gravity(
         if (cnt == 0) break;
         mean_x /= cnt;
         mean_y /= cnt;
-        
-        rotation(grav, -mean_x, -mean_y, 0);
+
+        rotation(grav, mean_x, mean_y, 0);
     }
 }
