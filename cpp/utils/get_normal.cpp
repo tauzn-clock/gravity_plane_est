@@ -23,6 +23,12 @@ std::vector<std::array<float,3> > get_normal(std::vector<std::array<float,3> > p
     for (int i = 0; i < H; ++i) {
         for (int j = 0; j < W; ++j) {
             int index = i * W + j;
+
+            if (points[index][2]==0){
+                normal[index] = {0,0,0};
+                continue;
+            }
+            
             diff_x = {right[index][0] - left[index][0], right[index][1] - left[index][1], right[index][2] - left[index][2]};
             diff_y = {down[index][0] - up[index][0], down[index][1] - up[index][1], down[index][2] - up[index][2]};
 
