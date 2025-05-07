@@ -39,10 +39,10 @@ void correct_gravity(
                 cnt++;
             }
         }
+
+        if (cnt == 0) break;
         mean_x /= cnt;
         mean_y /= cnt;
-
-        std::cout<<"Error"<<mean_x<<" "<<mean_y<<std::endl;
         
         rotation(grav, -mean_x, -mean_y, 0);
     }
