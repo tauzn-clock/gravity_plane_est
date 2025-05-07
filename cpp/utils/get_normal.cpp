@@ -37,3 +37,15 @@ std::vector<std::array<float,3> > get_normal(std::vector<std::array<float,3> > p
 
     return normal;
 }
+
+void centre_to_hemisphere(std::vector<std::array<float,3> >& normal, std::array<float, 3> grav){    
+
+    for (int i=0; i < normal.size(); ++i){
+        if (dot(normal[i],grav) < 0){
+            normal[i][0] *= -1;
+            normal[i][1] *= -1;
+            normal[i][2] *= -1;
+        }
+    }
+    
+}
