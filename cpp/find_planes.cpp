@@ -62,7 +62,7 @@ void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
     std::vector< std::array<float, 3> > points = depthmsg_to_3d(msg, camera_info, config["rescale_depth"].as<float>());
 
     std::array<float, 3> gravity_vector = {(float)imu.linear_acceleration.x, (float)imu.linear_acceleration.y, (float)imu.linear_acceleration.z};
-    gravity_vector = normalise(gravity_vector);
+    normalise(gravity_vector);
 
     std::vector< std::array<float, 3> > img_normals = get_normal(points, W, H);
     centre_to_hemisphere(img_normals,gravity_vector);

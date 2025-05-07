@@ -29,7 +29,7 @@ std::vector<std::array<float,3> > get_normal(std::vector<std::array<float,3> > p
             normal[index] = {diff_x[1] * diff_y[2] - diff_x[2] * diff_y[1],
                             diff_x[2] * diff_y[0] - diff_x[0] * diff_y[2],
                             diff_x[0] * diff_y[1] - diff_x[1] * diff_y[0]};
-            normal[index] = normalise(normal[index]);
+            normalise(normal[index]);
         }
     }
 
