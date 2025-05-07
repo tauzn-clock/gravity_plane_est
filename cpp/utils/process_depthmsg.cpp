@@ -1,9 +1,3 @@
-#include <ros/ros.h>
-#include <vector>
-
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/CameraInfo.h>
-
 std::vector<float> depthmsg_to_vector(const sensor_msgs::Image::ConstPtr& msg, float depth_scale) {
     int W = msg->width;
     int H = msg->height;

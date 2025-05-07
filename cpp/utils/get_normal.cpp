@@ -1,5 +1,3 @@
-#include <vector>
-
 std::vector<std::array<float,3> > get_normal(std::vector<std::array<float,3> > points, int W, int H){
     
     assert (points.size() == W*H);
