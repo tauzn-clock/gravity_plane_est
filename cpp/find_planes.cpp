@@ -10,6 +10,9 @@
 #include "utils/math_utils.cpp"
 #include "utils/process_depthmsg.cpp"
 #include "utils/get_normal.cpp"
+#include "utils/visualise.cpp"
+
+#define VISUALISE true
 
 YAML::Node config;
 sensor_msgs::Imu imu;
@@ -62,6 +65,8 @@ void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
     gravity_vector = normalise(gravity_vector);
 
     std::vector< std::array<float, 3> > img_normals = get_normal(points, W, H);
+
+    if (VISUALISE) save_normal(img_normals, W, H, "/catkin_ws/src/gravity_plane_est/normal.png");
 }
 
 int main(int argc, char** argv)

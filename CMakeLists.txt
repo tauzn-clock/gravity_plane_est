@@ -14,7 +14,11 @@ catkin_package()
 # Include directories
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
+
+# Find OpenCV package
+find_package(OpenCV REQUIRED)
 
 # Find the YAML-CPP library (for YAML support)
 find_package(yaml-cpp REQUIRED)
@@ -30,6 +34,7 @@ target_link_libraries(avg_imu
 
 target_link_libraries(find_planes
   ${catkin_LIBRARIES}
+  ${OpenCV_LIBS}
   yaml-cpp
 )
 
