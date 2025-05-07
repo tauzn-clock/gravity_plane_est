@@ -54,8 +54,7 @@ class FindPlaneNode:
         downsample_root = int(downsample**0.5)
 
         if self.imu == None or self.camera_intrinsic == None:
-            return
-        False
+            return False
 
         grav_normal = np.array([self.imu.linear_acceleration.x, self.imu.linear_acceleration.y, self.imu.linear_acceleration.z])
         grav_normal = grav_normal / (np.linalg.norm(grav_normal) + 1e-15)

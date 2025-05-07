@@ -46,5 +46,4 @@ void correct_gravity(
         
         rotation(grav, -mean_x, -mean_y, 0);
     }
-    std::cout<<std::endl;
 }
