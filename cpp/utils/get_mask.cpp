@@ -21,13 +21,12 @@ std::vector<int> get_mask(
 
     //Cluster in cm bins
     float CLUSTER_SIZE = 0.01;
-    int INV_CLUSTER_SIZE = (int)(1/CLUSTER_SIZE);
 
-    std::vector<int> bins((int)((largest-smallest)*INV_CLUSTER_SIZE)+1);
+    std::vector<int> bins((int)((largest-smallest)/CLUSTER_SIZE)+1);
 
     for(int i=0; i<dist.size(); i++){
         if (dist[i]!=0){
-            int index_i = (int)((dist[i]-smallest)*INV_CLUSTER_SIZE);
+            int index_i = (int)((dist[i]-smallest)/CLUSTER_SIZE);
             bins[index_i]++;
         }
     }
@@ -59,10 +58,10 @@ std::vector<int> get_mask(
 
     for(int i=0; i<mask.size(); i++){
         if (dist[i]!=0){
-            int index_i = (int)((dist[i]-smallest)*INV_CLUSTER_SIZE);
+            int index_i = (int)((dist[i]-smallest)/CLUSTER_SIZE);
             for(int j=0; j<std::min((int)store_index.size(),PLANE_CNT); j++){
                 if (index_i>=store_index[j].first-kernel_size/2 && index_i<=store_index[j].first+kernel_size/2){
-                    mask[i] = j;
+                    mask[i] = j+1;
                     break;
                 }
             }
