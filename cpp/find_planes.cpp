@@ -8,17 +8,18 @@
 #include <yaml-cpp/yaml.h>
 
 #include "utils/math_utils.cpp"
-#include "utils/process_depthmsg.cpp"
-#include "utils/get_normal.cpp"
 #include "utils/visualise.cpp"
+#include "utils/get_normal.cpp"
 #include "utils/correct_gravity.cpp"
 #include "utils/get_mask.cpp"
+#include "utils/data_conversion.cpp"
 
 #define VISUALISE true
 
 YAML::Node config;
 sensor_msgs::Imu imu;
 sensor_msgs::CameraInfo camera_info;
+ros::Publisher cloud_pub;
 
 bool imuReceived = false;
 bool cameraInfoReceived = false;
@@ -75,7 +76,10 @@ void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg){
     centre_to_hemisphere(img_normals,gravity_vector);
     std::vector<int> mask = get_mask(img_normals, points, gravity_vector, config["dot_bound"].as<float>(), config["kernel_size"].as<int>(), config["cluster_size"].as<int>());
 
-    if (VISUALISE) save_mask(mask, W, H, "/catkin_ws/src/gravity_plane_est/mask.png");
+    if (false) save_mask(mask, W, H, "/catkin_ws/src/gravity_plane_est/mask.png");
+
+    // Publish the PointCloud2 message
+    cloud_pub.publish(create_masked_pcd(points, mask, W, H));
 }
 
 int main(int argc, char** argv)
@@ -99,6 +103,8 @@ int main(int argc, char** argv)
     ros::Subscriber imu_sub = nh.subscribe(imu_topic, 100, imuCallback);
     ros::Subscriber depth_img_sub = nh.subscribe(depth_img_topic, 24, depthImageCallback);
     ros::Subscriber camera_info_sub = nh.subscribe(depth_intrinsic_topic, 1, depthIntrinsicCallback);
+
+    cloud_pub = nh.advertise<sensor_msgs::PointCloud2>("/masked_pcd", 1);
 
     // Spin to keep the node alive
     ros::spin();
